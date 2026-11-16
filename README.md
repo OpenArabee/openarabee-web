@@ -10,6 +10,8 @@ site generated from the dataset, with one page per root.
 ## Rules
 
 - No cookies, no trackers, nothing loaded from other servers (fonts, scripts, analytics).
+  Libraries are kept in the repository: `assets/vendor/` holds three.js r187 (MIT, minified with esbuild)
+  and its OrbitControls for the 3D view in `assets/abwab3d.js`.
 - Every linguistic value shown on the site comes from `openarabee-core`, with its source and status.
   The example on the start page is bāb 1 of `reference/abwab.bina-35.json`.
 - No numbers or claims that the project has not computed itself (charter §9).
