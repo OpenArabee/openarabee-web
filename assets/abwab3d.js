@@ -143,7 +143,14 @@ async function start() {
   resize();
 }
 
+function fail(err) {   // say why instead of hiding the section
+  const reason = String(err && err.message || err);
+  host.textContent = 'تعذّر عرض المجسّم في هذا المتصفح. الجدول أدناه يحوي المحتوى نفسه. (' + reason + ')';
+  host.style.cssText += ';aspect-ratio:auto;padding:1rem;color:#46586A';
+  document.querySelector('.vizbar').hidden = true; document.getElementById('viz-detail').hidden = true;
+  console.error('abwab3d:', err);
+}
 try {
-  if (!document.createElement('canvas').getContext('webgl2')) throw new Error('no WebGL');
-  start().catch(() => { document.getElementById('viz-section').hidden = true; });
-} catch { document.getElementById('viz-section').hidden = true; }
+  if (!document.createElement('canvas').getContext('webgl2')) throw new Error('WebGL غير متاح');
+  start().catch(fail);
+} catch (e) { fail(e); }
