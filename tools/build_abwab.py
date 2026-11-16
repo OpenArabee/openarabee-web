@@ -16,6 +16,10 @@ from pathlib import Path
 
 WEB = Path(__file__).resolve().parent.parent
 TEN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"]
+# Arabic interface texts of the 3D view (explanations, not data)
+UI = {"floor": "الماضي على {n} أحرف", "digits": {"3": "٣", "4": "٤", "5": "٥", "6": "٦"},
+      "columns": {"thulathi": "الثلاثي", "mulhaq": "الملحق بالرباعي", "rubai": "الرباعي"},
+      "bab": "الباب", "model": "موزونه:", "use": "بناؤه:", "more": "التفاصيل في الجدول"}
 STATUS_TEXT = {"source-verified": "checked against the print", "draft": "draft"}
 
 
@@ -89,7 +93,29 @@ def build(core: Path) -> str:
             f'</article>')
     flush()
 
-    return TEMPLATE.replace("{{TILES}}", "".join(tiles)).replace("{{SECTIONS}}", "\n".join(sections)).replace("{{COMMIT}}", commit)
+    DIA = set("\u064b\u064c\u064d\u064e\u064f\u0650\u0652\u0670")
+    def letters(word):  # letters of the past form; a doubled letter counts twice
+        return sum(2 if ch == "\u0651" else 1 for ch in word if ch not in DIA) - word.count("\u0651")
+    def col(gid):
+        return "mulhaq" if gid.startswith("mulhaq") else "rubai" if gid.startswith("rubai") else "thulathi"
+    viz = {"ui": UI, "abwab": [{
+        "n": b["number"], "col": col(b["group"]), "letters": letters(b["wazn"]["past"]["value"]),
+        "past": b["wazn"]["past"]["value"], "impf": b["wazn"]["imperfect"]["value"],
+        "model": b["mawzun"]["past"]["value"], "modelImpf": b["mawzun"]["imperfect"]["value"],
+        "masdar": "، ".join(x["value"] for x in b["mawzun"].get("masdar", [])),
+        "use": b["bina"]["ar"]["value"], "group": groups[b["group"]]["label_ar"]["value"],
+        "forms": [{"id": x["value"], "ten": x["value"] in TEN} for x in b["western"]],
+        "ten": any(x["value"] in TEN and x["relation"] in ("exact", "vowel-class") for x in b["western"]),
+        "page": b["wazn"]["past"]["src"][0]["loc"]} for b in abwab["abwab"]]}
+    shape = {}
+    for v in viz["abwab"]:
+        shape[(v["col"], v["letters"])] = shape.get((v["col"], v["letters"]), 0) + 1
+    expected = {("thulathi", 3): 6, ("thulathi", 4): 3, ("thulathi", 5): 5, ("thulathi", 6): 4, ("rubai", 4): 1, ("rubai", 5): 1,
+                ("rubai", 6): 2, ("mulhaq", 4): 6, ("mulhaq", 5): 5, ("mulhaq", 6): 2}
+    assert shape == expected, shape
+    data = json.dumps(viz, ensure_ascii=False).replace("</", "<\\/")
+
+    return TEMPLATE.replace("{{DATA}}", data).replace("{{TILES}}", "".join(tiles)).replace("{{SECTIONS}}", "\n".join(sections)).replace("{{COMMIT}}", commit)
 
 
 TEMPLATE = """<!doctype html>
@@ -137,6 +163,21 @@ TEMPLATE = """<!doctype html>
   .rel { display:block; margin:.15rem 0 .3rem; }
   .st-source-verified { color:#2F6B3A; } .st-draft, .st-partly { color:var(--gold-deep); }
   .legend { font-size:.9375rem; }
+  #viz-section h2 { font-family:"Amiri","Scheherazade New","Noto Naskh Arabic","Geeza Pro","Traditional Arabic","Times New Roman",serif; font-size:1.9rem; }
+  .vizp { font-size:1.25rem; line-height:1.9; color:var(--navy); }
+  .vizbar { display:flex; flex-wrap:wrap; align-items:center; gap:.6rem 1rem; margin-top:1rem; }
+  #viz-ten { font:inherit; font-size:1rem; padding:.35rem .9rem; border-radius:999px; border:1px solid var(--navy); background:var(--card); color:var(--navy); cursor:pointer; }
+  #viz-ten[aria-pressed="true"] { background:var(--navy); color:#fff; }
+  #viz-ten:focus-visible { outline:2px solid var(--gold); outline-offset:3px; }
+  .vizhint { font-size:.9375rem; color:var(--soft); }
+  #viz { margin-top:.8rem; aspect-ratio:1.08; max-height:46rem; width:100%; background:var(--card); border:1px solid var(--rule); border-radius:.75rem; overflow:hidden; }
+  #viz canvas { display:block; width:100%; height:100%; cursor:grab; }
+  #viz-detail { margin-top:.8rem; padding:.9rem 1.1rem; background:var(--card); border:1px solid var(--rule); border-radius:.75rem; min-height:4rem; }
+  .d-num { font-size:1rem; color:var(--gold-deep); }
+  .d-pat { font-size:2.2rem; line-height:1.5; }
+  .d-model, .d-use { font-size:1.3rem; line-height:1.7; }
+  .d-foot { display:flex; flex-wrap:wrap; align-items:center; gap:.5rem .8rem; margin-top:.5rem; font-size:.9375rem; }
+  .en-note { font-size:.9375rem; }
   footer { margin-top:3rem; padding-top:1.2rem; border-top:1px solid var(--rule); font-size:.9375rem; color:var(--soft); }
   @media (max-width:40rem) {
     .tiles { grid-template-columns:repeat(2,1fr); }
@@ -152,6 +193,21 @@ TEMPLATE = """<!doctype html>
   <main>
     <h1>The 35 abwāb and the ten Forms</h1>
     <p>The classical primer <i>Matn Bināʾ al-afʿāl</i> sorts the Arabic verb into 35 patterns (<i>abwāb</i>), each with a model verb. Western grammars number the patterns as Forms. This page sets the two side by side. Every row gives the page of the printed source, and says how far it has been checked.</p>
+
+    <section id="viz-section" lang="ar" dir="rtl">
+      <h2 class="ar">البناء كلّه في نظرة واحدة</h2>
+      <p class="ar vizp">كلّ بطاقة بابٌ من الأبواب الخمسة والثلاثين: الوزن وتحته موزونه. الطابق يدلّ على عدد حروف الماضي، من ثلاثة أحرف في الأسفل إلى ستة في الأعلى، فكلّما صعدت طابقًا زاد الفعل حرفًا. والأعمدة ثلاثة: الثلاثي، والرباعي، وبينهما الملحق بالرباعي. قال صاحب المتن: «معنى الإلحاق اتحاد المصدرين» (ص ٥٦٥).</p>
+      <div class="vizbar">
+        <button type="button" id="viz-ten" aria-pressed="false">أظهر الأوزان العشرة</button>
+        <span class="vizhint">اسحب للتدوير · انقر بطاقة لتفاصيلها</span>
+      </div>
+      <div id="viz"></div>
+      <div id="viz-detail" aria-live="polite"><div class="d-num">انقر بطاقة في البناء.</div></div>
+      <p class="en-note" lang="en" dir="ltr">Each card is one of the 35 abwāb. The floor is the number of letters of the past form (three at the bottom, six at the top); the columns are triliteral, attached (mulḥaq) and quadriliteral verbs. Dark cards are the ten Forms. The same content is in the list below.</p>
+    </section>
+    <script type="application/json" id="abwab-data">{{DATA}}</script>
+    <script type="importmap">{"imports": {"three": "./assets/vendor/three.module.js"}}</script>
+    <script type="module" src="assets/abwab3d.js"></script>
 
     <h2>The ten Forms <span class="ar" lang="ar" dir="rtl">الأوزان العشرة</span></h2>
     <p class="legend">Forms I to X after Wright’s <i>Grammar</i>, each linked to its place among the abwāb. Form I covers the first six abwāb, which differ only in their vowels.</p>
