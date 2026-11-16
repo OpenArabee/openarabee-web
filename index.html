@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenArabee: open, source-referenced data on Arabic morphology</title>
+<meta name="description" content="OpenArabee describes Arabic verbs in both grammatical traditions, the classical abwāb and the Western Forms, and gives a source and a verification status for every single value.">
+<meta property="og:title" content="OpenArabee">
+<meta property="og:description" content="Open, source-referenced data on Arabic morphology: roots, abwāb and Forms I–XV.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://openarabee.com/">
+<meta property="og:image" content="https://openarabee.com/assets/icon-512.png">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/icon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<style>
+  :root {
+    color-scheme: light;
+    --navy: #0A2A45;
+    --gold: #C29A52;
+    --gold-deep: #8A6A2C;
+    --paper: #FBF8F1;
+    --card: #FFFFFF;
+    --rule: #E6DECB;
+    --ink-soft: #46586A;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--navy);
+    font: 1.0625rem/1.65 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  .wrap { max-width: 43rem; margin: 0 auto; padding: 0 1.5rem; }
+  header { padding: 3.5rem 0 0; }
+  header img { display: block; width: min(19rem, 78%); height: auto; }
+  .status {
+    display: inline-block; margin: 2.75rem 0 0; padding: .2rem .7rem;
+    border: 1px solid var(--gold); border-radius: 999px;
+    font-size: .8125rem; letter-spacing: .04em; text-transform: uppercase; color: var(--gold-deep);
+  }
+  h1 {
+    margin: 1rem 0 0;
+    font: 400 clamp(2rem, 6.2vw, 2.9rem)/1.14 "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    letter-spacing: -.01em; text-wrap: balance;
+  }
+  .ar {
+    font-family: "Amiri", "Scheherazade New", "Noto Naskh Arabic", "Geeza Pro", "Traditional Arabic", "Times New Roman", serif;
+  }
+  p.tagline-ar { margin: .9rem 0 0; font-size: 1.5rem; line-height: 1.8; color: var(--gold-deep); }
+  p.lead { margin: 1.6rem 0 0; font-size: 1.125rem; color: var(--ink-soft); }
+  p.lead strong { color: var(--navy); font-weight: 600; }
+
+  figure.fact { margin: 3rem 0 0; }
+  .fact-card { background: var(--card); border: 1px solid var(--rule); border-radius: .75rem; overflow: hidden; }
+  .fact-forms {
+    padding: 1.6rem 1.5rem 1.2rem; text-align: center;
+    font-size: clamp(2.1rem, 8vw, 3rem); line-height: 1.5;
+    border-bottom: 1px solid var(--rule);
+  }
+  .fact-forms .sep { color: var(--gold); padding: 0 .35em; }
+  dl { margin: 0; padding: .4rem 1.5rem .9rem; }
+  dl > div { display: grid; grid-template-columns: 7.2rem 1fr; gap: .75rem; padding: .55rem 0; border-top: 1px solid var(--rule); }
+  dl > div:first-child { border-top: 0; }
+  dt { font-size: .8125rem; letter-spacing: .04em; text-transform: uppercase; color: var(--gold-deep); padding-top: .2rem; }
+  dd { margin: 0; }
+  .ar.inline { font-size: 1.3em; line-height: 1; white-space: nowrap; }
+  .pill { display: inline-block; padding: 0 .55rem; border-radius: 999px; background: #F3ECDB; font-size: .9rem; }
+  figcaption { margin-top: .8rem; font-size: .9375rem; color: var(--ink-soft); }
+
+  h2 { margin: 3.2rem 0 .4rem; font: 600 1.0625rem/1.4 inherit; }
+  ul.plain { margin: 0; padding: 0; list-style: none; }
+  ul.plain li { padding: .55rem 0; border-top: 1px solid var(--rule); }
+  ul.plain li:last-child { border-bottom: 1px solid var(--rule); }
+  a { color: var(--navy); text-decoration-color: var(--gold); text-decoration-thickness: .09em; text-underline-offset: .2em; }
+  a:hover { text-decoration-thickness: .16em; }
+  a:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 2px; }
+  .hint { color: var(--ink-soft); }
+  footer { margin: 3.5rem 0 0; padding: 1.4rem 0 3rem; border-top: 1px solid var(--rule); font-size: .9375rem; color: var(--ink-soft); }
+  @media (max-width: 30rem) {
+    dl > div { grid-template-columns: 1fr; gap: 0; }
+    header { padding-top: 2.25rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="assets/logo.svg" alt="OpenArabee" width="517" height="110">
+  </header>
+
+  <main>
+    <span class="status">Under construction</span>
+    <h1>Arabic verbs in both grammatical traditions, with a source for every fact.</h1>
+    <p class="tagline-ar ar" lang="ar" dir="rtl">بيانات مفتوحة في الصرف العربي، لكل معلومة مصدرها</p>
+
+    <p class="lead">OpenArabee is building an <strong>open dataset of Arabic morphology</strong>, beginning with the most frequent roots of the Quran. Each verb is described twice: by its classical <em>bāb</em> and by its Western numbered Form. Each value names the work and page it was taken from and shows how far it has been checked.</p>
+
+    <figure class="fact">
+      <div class="fact-card">
+        <div class="fact-forms ar" lang="ar" dir="rtl">نَصَرَ<span class="sep">·</span>يَنْصُرُ</div>
+        <dl>
+          <div><dt>Classical</dt><dd>bāb 1 of the 35 abwāb, pattern <span class="ar inline" lang="ar" dir="rtl">فَعَلَ يَفْعُلُ</span></dd></div>
+          <div><dt>Western</dt><dd>Form I, vowel class <i>a</i> / <i>u</i></dd></div>
+          <div><dt>Sources</dt><dd><i>Matn Bināʾ al-afʿāl</i>, in <i>Majmūʿ muhimmāt al-mutūn</i> (Cairo 1949), p.&nbsp;557 · Wright, <i>A Grammar of the Arabic Language</i>, 3rd ed., vol.&nbsp;I, §35</dd></div>
+          <div><dt>Status</dt><dd><span class="pill">draft</span> <span class="hint">not yet reviewed by an expert</span></dd></div>
+        </dl>
+      </div>
+      <figcaption>A real entry from the reference tables. Everything in the dataset carries its source and status in this way.</figcaption>
+    </figure>
+
+    <h2>Where things stand</h2>
+    <ul class="plain">
+      <li>Published: the data model, the register of sources, and the two reference tables (the 35 abwāb of <i>Matn al-Bināʾ</i> and Forms I–XV after Wright).</li>
+      <li>In preparation: entries for the first hundred roots.</li>
+      <li>This page will become a browsable site with one page per root.</li>
+    </ul>
+
+    <h2>Take a look, or help</h2>
+    <ul class="plain">
+      <li><a href="https://github.com/OpenArabee/openarabee-core">The data and how it is checked</a> <span class="hint">on GitHub</span></li>
+      <li><a href="https://github.com/OpenArabee/openarabee-core/blob/main/docs/charter.md">The project charter</a> <span class="hint">goals, sources, rules</span></li>
+      <li><a href="https://github.com/OpenArabee/openarabee-core/issues/new/choose">Suggest a correction</a> <span class="hint">please name a source</span></li>
+    </ul>
+  </main>
+
+  <footer>
+    Data and texts: <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Code: MIT. This site sets no cookies and loads nothing from other servers.
+  </footer>
+</div>
+</body>
+</html>
