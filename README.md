@@ -15,6 +15,11 @@ site generated from the dataset, with one page per root.
 - No numbers or claims that the project has not computed itself (charter §9).
 - Changes go through a branch and a pull request; the owner merges.
 
+## Generated pages
+
+`abwab.html` is generated from the reference tables: `python tools/build_abwab.py ../openarabee-core`
+(a checkout of `openarabee-core` at `main`). Regenerate it whenever the tables change; never edit it by hand.
+
 ## Publishing
 
 GitHub Pages: *Settings → Pages → Deploy from a branch → `main` / root*. The file `CNAME` sets the
